@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" Using mypy to validate the piece of code 
+""" Using mypy to validate the piece of code
 below, applying necessary changes"""
 
 from typing import Tuple, List, Any
