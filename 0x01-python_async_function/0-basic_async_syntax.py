@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Asyn function that takes in an int arg wit a 
+"""Asyn function that takes in an int arg wit a
 defaut value of 10 and waits for a random delay
 """
 
