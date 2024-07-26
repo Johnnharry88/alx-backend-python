@@ -30,6 +30,7 @@ class TestAccessNestedMap(TestCase):
             access_nested_map(map, path)
             self.assertEqual(w_output, x.exception)
 
+
 class TestGetJson(TestCase):
     """ Class used for testing get jsoen function"""
     @parameterized.expand([
@@ -65,6 +66,6 @@ class TestMemoize(TestCase):
         with patch.object(TestClass, 'a_method', return_value=42) as patched:
             testout = TestClass()
             exp_return = testout.a_property
-            
+
             self.assertEqual(exp_return, 42)
             patched.assert_called_once()
