@@ -29,10 +29,11 @@ class TestGithubOrgClient(TestCase):
     def test_org(self, org: str, exp_response: Dict,
                  m_json: MagicMock) -> None:
         """ Tests out the org method correct output"""
+        m_json.return_value = MagicMock(return_value=exp_response)
         gx = GithubOrgClient(org)
         self.assertEqual(gx.org(), exp_response)
         m_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{name_org}"
+            f"https://api.github.com/orgs/{org}"
             )
 
     def test_public_repos_url(self) -> None:
@@ -128,7 +129,19 @@ class TestIntegrationGithubOrgClient(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         """ Sets class features prior to tunning test"""
-        cls.get_patcher = patch('requests.get', side_effect=HTTPError)
+        test_payload = {
+            'https://api.github.com/orgs/google': cls.org_payload,
+            'https://api.github.com/orgs/google/repos': cls.repos_payload,
+        }
+
+        def get_payload(url):
+            """Fetchs the url for use in test"""
+            if url in test_payload:
+                return Mock(**{'json.return_value': test_payload[url]})
+            return HTTPError
+
+        cls.get_patcher = patch("requests.get", side_effect=get_payload)
+        cls.get_patcher.start()
 
     def test_public_repos(self) -> None:
         """Test the public repos method"""
