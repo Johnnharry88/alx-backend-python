@@ -19,7 +19,7 @@ class TestGithubOrgClient(TestCase):
     @patch('client.get_json')
     def test_org(self, org: str, exp_response: Dict,
                  m_json: MagicMock) -> None:
-        """ Tests for correct output"""
+        """ Tests out the org method correct output"""
         gx = GithubOrgClient(org)
         self.assertEqual(gx.org(), exp_response)
         m_json.assert_called_once_with(
@@ -40,7 +40,7 @@ class TestGithubOrgClient(TestCase):
 
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json: MagicMock) -> None:
-        """ Tests ou the method for the public repos"""
+        """ Tests out method for the public repos"""
         test_payload = {
             'repos_url': "https://api.github.com/users/google/repos",
             'repos': [
