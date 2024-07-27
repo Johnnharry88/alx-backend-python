@@ -39,8 +39,8 @@ class TestGithubOrgClient(TestCase):
     def test_public_repos_url(self) -> None:
         """ Tests out the public repo property"""
         with patch('client.GithubOrgClient.org',
-             new_callable=PropertyMock) as _mock:
-            _mock.return_value = {
+             new_callable=PropertyMock) as mock_org:
+            mock_org.return_value = {
                     'repos_url': 'https://api.github.com/users/google/repos',
             }
             self.assertEqual(
@@ -92,8 +92,8 @@ class TestGithubOrgClient(TestCase):
         with patch(
                 'client.GithubOrgClient._public_repos_url',
                 new_callable=PropertyMock,
-                ) as mock_pub_repo:
-            mock_pub_repo.return_value = test_payload['repos_url']
+                ) as mock_public_repos_url:
+            mock_public_repos_url.return_value = test_payload['repos_url']
             self.assertEqual(
                 GithubOrgClient('google').public_repos(),
                 [
@@ -101,7 +101,7 @@ class TestGithubOrgClient(TestCase):
                     'kratu',
                 ],
             )
-            mock_pub_repo.assert_called_once()
+            mock_public_repos_url.assert_called_once()
         mock_get_json.assert_called_once()
 
     @parameterized.expand([
