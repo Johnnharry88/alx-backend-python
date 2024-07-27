@@ -2,12 +2,19 @@
 """ Moudle used for test"""
 
 from typing import Dict
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from unittest import TestCase, mock
-from unittest.mock import patch, Mock, MagicMock
-from unittest.mock import PropertyMock
-from client import GithubOrgClient
+from unittest.mock import (
+    patch,
+    Mock,
+    MagicMock,
+    PropertyMock
+)
+from client import (
+    GithubOrgClient\
+)
 from fixtures import TEST_PAYLOAD
+from requests import HTTPError
 
 
 class TestGithubOrgClient(TestCase):
@@ -115,7 +122,7 @@ class TestGithubOrgClient(TestCase):
         'apache2_repos': TEST_PAYLOAD[0][3],
     },
 ])
-class TestIntegrationGithubOrgClient(unittest.TestCase):
+class TestIntegrationGithubOrgClient(TestCase):
     """class that runs integration tests for GithubOrgClient
     class"""
     @classmethod
@@ -137,7 +144,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         """Test the public repos method"""
         self.assertEqual(
             GithubOrgClient('google').public_repos(),
-            self.expeted_repo,
+            self.expeted_repos,
         )
 
     def test_public_repo_with_license(self) -> None:
