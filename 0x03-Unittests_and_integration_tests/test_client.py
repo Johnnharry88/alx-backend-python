@@ -16,7 +16,9 @@ class TestGithubOrgClient(TestCase):
         ('google', {'login': 'google'}),
         ('abc', {'login': 'abc'}),
     ])
-    @patch('client.get_json')
+    @patch(
+        'client.get_json'
+    )
     def test_org(self, org: str, exp_response: Dict,
                  m_json: MagicMock) -> None:
         """ Tests out the org method correct output"""
@@ -103,3 +105,49 @@ class TestGithubOrgClient(TestCase):
         gx = GithubOrgClient('google')
         pos_license = gx.has_license(repo, key)
         self.assertEqual(pos_license, expected)
+
+
+@parameterized_class([
+    {
+        'org_payload': TEST_PAYLOAD[0][0],
+        'repos_payload': TEST_PAYLOAD[0][1],
+        'expected_repos': TEST_PAYLOAD[0][2],
+        'apache2_repos': TEST_PAYLOAD[0][3],
+    },
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """class that runs integration tests for GithubOrgClient
+    class"""
+    @classmethod
+    def setUpClass(cls) -> None:
+        """ Sets class features prior to tunning test"""
+        route_payload = {
+            'https://api.github.com/orgs/google': cls.org_payload,
+            'https://api.github.com/orgs.google/repos': cls.repos_payload,
+        }
+
+        def get_payload(url):
+            if url in route_payload:
+                return Mock(**{'json.return_value': route_payload[url]})
+            return HTTPError
+        cls.get_patcher = patch('requests.get', side_effect=get_payload)
+        cls.get_patcher.start()
+
+    def test_public_repos(self) -> None:
+        """Test the public repos method"""
+        self.assertEqual(
+            GithubOrgClient('google').public_repos(),
+            self.expeted_repo,
+        )
+
+    def test_public_repo_with_license(self) -> None:
+        """Test the public_repo methodw with a license"""
+        self.assertEqual(
+            GithubOrgClient('google').public_repos(license='apache-2.0'),
+            self.apache2_repos,
+        )
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        """Removes clas after testing"""
+        cls.get_patcher.stop()
